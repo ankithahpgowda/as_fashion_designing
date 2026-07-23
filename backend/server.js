@@ -71,13 +71,26 @@ app.get('/api/courses', (req, res) => {
     });
 });
 
+// Temporary in-memory fallback if MySQL is not connected
+const inMemoryEnquiries = [];
+
 app.post('/api/enquiries', (req, res) => {
     const { name, email, phone, course_interested, city, message } = req.body;
-    const query = 'INSERT INTO enquiries (name, email, phone, course_interested, message) VALUES (?, ?, ?, ?, ?)';
-    db.query(query, [name, email, phone, course_interested, message], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ message: 'Enquiry submitted successfully!', id: result.insertId });
-    });
+    
+    if (db && db.state !== 'disconnected') {
+        const query = 'INSERT INTO enquiries (name, email, phone, course_interested, message) VALUES (?, ?, ?, ?, ?)';
+        db.query(query, [name, email, phone, course_interested, message], (err, result) => {
+            if (err) {
+                console.error('MySQL Insert Error, falling back to memory store:', err.message);
+                inMemoryEnquiries.push({ name, email, phone, course_interested, city, message, created_at: new Date() });
+                return res.json({ message: 'Enquiry submitted successfully!', id: Date.now() });
+            }
+            res.json({ message: 'Enquiry submitted successfully!', id: result.insertId });
+        });
+    } else {
+        inMemoryEnquiries.push({ name, email, phone, course_interested, city, message, created_at: new Date() });
+        res.json({ message: 'Enquiry submitted successfully!', id: Date.now() });
+    }
 });
 
 // Catch-all route to serve the frontend

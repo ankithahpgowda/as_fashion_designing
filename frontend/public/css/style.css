@@ -215,6 +215,32 @@ h1, h2, h3, h4, h5, .logo-text, .luxury-badge {
     background-color: #0c0c0c;
 }
 
+.luxury-cream-bg {
+    background-color: #FAF7F2;
+}
+
+.luxury-cream-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+}
+
+.cream-input {
+    background: #FAFAFA;
+    border: 1px solid #E0DACE;
+    color: #222222;
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
+.cream-input:focus {
+    background: #FFFFFF;
+    border-color: var(--accent-gold);
+    color: #111111;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+}
+
 /* Portfolio Overlay */
 .portfolio-item {
     cursor: pointer;
