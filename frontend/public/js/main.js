@@ -106,9 +106,10 @@ $(document).ready(function () {
                 const slipHtml = `
                     <div id="pdfPrintArea" style="background:#FFF8F0; padding:25px; border:2px solid #D4AF37; border-radius:12px; font-family:'Poppins', sans-serif; color:#222;">
                         <div style="text-align:center; border-bottom:2px dashed #D4AF37; padding-bottom:15px; margin-bottom:20px;">
-                            <h2 style="font-family:'Playfair Display', serif; color:#111; margin:0; font-weight:bold; letter-spacing:1px;">ABHISHRE FASHION ACADEMY</h2>
-                            <p style="margin:4px 0 0 0; font-size:12px; color:#D4AF37; font-weight:600; text-transform:uppercase;">Luxury Fashion & Design Education</p>
-                            <p style="margin:2px 0 0 0; font-size:11px; color:#666;">Fashion Hub, Main Blvd, Mumbai | +91 98765 43210 | info@abhishrefashion.com</p>
+                            <img src="public/images/logo.png" alt="AS Fashion Designing Logo" style="width:70px; height:70px; margin-bottom:8px; object-fit:contain;">
+                            <h2 style="font-family:'Playfair Display', serif; color:#111; margin:0; font-weight:bold; letter-spacing:1px;">AS FASHION DESIGNING</h2>
+                            <p style="margin:4px 0 0 0; font-size:12px; color:#D4AF37; font-weight:600; text-transform:uppercase;">STUDIO & ACADEMY</p>
+                            <p style="margin:2px 0 0 0; font-size:11px; color:#666;">Fashion Hub, Main Blvd, Mumbai | +91 98765 43210 | info@asfashiondesigning.com</p>
                         </div>
 
                         <div style="background:#111; color:#D4AF37; padding:8px 15px; border-radius:6px; font-weight:bold; font-size:14px; text-align:center; margin-bottom:20px;">
