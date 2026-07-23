@@ -113,6 +113,37 @@ app.get('/api/admin/enquiries', (req, res) => {
     });
 });
 
+// Update Enquiry Status (Accept / Reject)
+app.put('/api/admin/enquiries/:id/status', (req, res) => {
+    const id = req.params.id;
+    const { status } = req.body;
+
+    // Update in fallback array if exists
+    const fallbackItem = fallbackEnquiries.find(item => String(item.id) === String(id));
+    if (fallbackItem) {
+        fallbackItem.status = status;
+    }
+
+    db.query('UPDATE enquiries SET status = ? WHERE id = ?', [status, id], (err, result) => {
+        res.json({ success: true, message: `Status updated to ${status}` });
+    });
+});
+
+// Delete Enquiry
+app.delete('/api/admin/enquiries/:id', (req, res) => {
+    const id = req.params.id;
+
+    // Remove from fallback array if exists
+    const fallbackIndex = fallbackEnquiries.findIndex(item => String(item.id) === String(id));
+    if (fallbackIndex !== -1) {
+        fallbackEnquiries.splice(fallbackIndex, 1);
+    }
+
+    db.query('DELETE FROM enquiries WHERE id = ?', [id], (err, result) => {
+        res.json({ success: true, message: 'Enquiry deleted successfully' });
+    });
+});
+
 // Explicit route for admin portal
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/admin.html'));
