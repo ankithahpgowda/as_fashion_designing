@@ -83,28 +83,14 @@ $(document).ready(function () {
                 $('#formMessage')
                     .removeClass('d-none alert-danger')
                     .addClass('alert alert-success')
-                    .html('✨ Thank you! Your application has been submitted successfully. Our admission team will contact you shortly.');
+                    .text('✨ Thank you! Your application has been submitted successfully. Our admission team will contact you shortly.');
                 $('#admissionForm')[0].reset();
             },
             error: function (err) {
-                // Fallback to direct WhatsApp submit if server is unreachable/error
-                const waMessage = encodeURIComponent(
-                    `*New Admission Application*\n` +
-                    `*Name:* ${formData.name}\n` +
-                    `*Email:* ${formData.email}\n` +
-                    `*Phone:* ${formData.phone}\n` +
-                    `*City:* ${formData.city}\n` +
-                    `*Course:* ${formData.course_interested}\n` +
-                    `*Message:* ${formData.message || 'N/A'}`
-                );
-                const waUrl = `https://wa.me/919876543210?text=${waMessage}`;
-                
                 $('#formMessage')
-                    .removeClass('d-none alert-danger')
-                    .addClass('alert alert-info')
-                    .html(`✨ Submitting via WhatsApp... <a href="${waUrl}" target="_blank" class="fw-bold text-dark text-decoration-underline">Click here to open WhatsApp</a>`);
-                
-                window.open(waUrl, '_blank');
+                    .removeClass('d-none alert-success')
+                    .addClass('alert alert-danger')
+                    .text('⚠️ Failed to submit application. Please try again or contact us on WhatsApp.');
             },
             complete: function () {
                 $btn.prop('disabled', false).text('Submit Application');

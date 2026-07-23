@@ -196,18 +196,25 @@ h1, h2, h3, h4, h5, .logo-text, .luxury-badge {
     border-radius: 16px;
 }
 
+.glassmorphism-card-light {
+    background: #FFFFFF;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
 .luxury-input {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #FFF;
+    background: #FAFAF8;
+    border: 1px solid #E2E2DC;
+    color: #222222;
     padding: 12px 16px;
     border-radius: 8px;
 }
 
 .luxury-input:focus {
-    background: rgba(255, 255, 255, 0.15);
+    background: #FFFFFF;
     border-color: var(--accent-gold);
-    color: #FFF;
+    color: #222222;
     box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
 }
 
@@ -215,30 +222,8 @@ h1, h2, h3, h4, h5, .logo-text, .luxury-badge {
     background-color: #0c0c0c;
 }
 
-.luxury-cream-bg {
-    background-color: #FAF7F2;
-}
-
-.luxury-cream-card {
-    background: #FFFFFF;
-    border: 1px solid rgba(212, 175, 55, 0.4);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-}
-
-.cream-input {
-    background: #FAFAFA;
-    border: 1px solid #E0DACE;
-    color: #222222;
-    padding: 12px 16px;
-    border-radius: 8px;
-}
-
-.cream-input:focus {
-    background: #FFFFFF;
-    border-color: var(--accent-gold);
-    color: #111111;
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+.luxury-light-bg {
+    background-color: #FDFBF7;
 }
 
 /* Portfolio Overlay */

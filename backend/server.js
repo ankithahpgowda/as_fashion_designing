@@ -51,6 +51,7 @@ db.connect((err) => {
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         phone VARCHAR(50),
+        city VARCHAR(255),
         course_interested VARCHAR(255),
         message TEXT,
         status VARCHAR(50) DEFAULT 'Pending',
@@ -63,6 +64,9 @@ db.connect((err) => {
   }
 });
 
+// In-memory fallback storage if DB fails/is disconnected
+const fallbackEnquiries = [];
+
 // API Routes
 app.get('/api/courses', (req, res) => {
     db.query('SELECT * FROM courses', (err, results) => {
@@ -71,26 +75,19 @@ app.get('/api/courses', (req, res) => {
     });
 });
 
-// Temporary in-memory fallback if MySQL is not connected
-const inMemoryEnquiries = [];
-
 app.post('/api/enquiries', (req, res) => {
     const { name, email, phone, course_interested, city, message } = req.body;
+    const query = 'INSERT INTO enquiries (name, email, phone, city, course_interested, message) VALUES (?, ?, ?, ?, ?, ?)';
     
-    if (db && db.state !== 'disconnected') {
-        const query = 'INSERT INTO enquiries (name, email, phone, course_interested, message) VALUES (?, ?, ?, ?, ?)';
-        db.query(query, [name, email, phone, course_interested, message], (err, result) => {
-            if (err) {
-                console.error('MySQL Insert Error, falling back to memory store:', err.message);
-                inMemoryEnquiries.push({ name, email, phone, course_interested, city, message, created_at: new Date() });
-                return res.json({ message: 'Enquiry submitted successfully!', id: Date.now() });
-            }
-            res.json({ message: 'Enquiry submitted successfully!', id: result.insertId });
-        });
-    } else {
-        inMemoryEnquiries.push({ name, email, phone, course_interested, city, message, created_at: new Date() });
-        res.json({ message: 'Enquiry submitted successfully!', id: Date.now() });
-    }
+    db.query(query, [name, email, phone, city, course_interested, message], (err, result) => {
+        if (err) {
+            console.error('MySQL insert error, using in-memory store:', err.message);
+            const newEnquiry = { id: Date.now(), name, email, phone, city, course_interested, message, created_at: new Date() };
+            fallbackEnquiries.push(newEnquiry);
+            return res.json({ message: 'Enquiry submitted successfully!', id: newEnquiry.id });
+        }
+        res.json({ message: 'Enquiry submitted successfully!', id: result.insertId });
+    });
 });
 
 // Catch-all route to serve the frontend
