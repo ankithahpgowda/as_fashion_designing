@@ -3,55 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Abhishre Fashion Academy</title>
+    <title>Admin Portal | Abhishre Fashion Academy</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="public/css/style.css">
+    <style>
+        body {
+            background-color: #0F0F12;
+            color: #E2E8F0;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .admin-nav {
+            background: #16161C;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .login-card {
+            background: #16161C;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .dashboard-card {
+            background: #16161C;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 16px;
+        }
+        .stat-card {
+            background: #1E1E26;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+        }
+        .table-dark-custom {
+            --bs-table-bg: #16161C;
+            --bs-table-color: #E2E8F0;
+            --bs-table-hover-bg: #22222D;
+            border-color: rgba(255,255,255,0.08);
+        }
+        .badge-course {
+            background: rgba(212, 175, 55, 0.15);
+            color: #D4AF37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+    </style>
 </head>
-<body class="bg-dark text-white">
-    
-    <nav class="navbar navbar-dark bg-black px-4 border-bottom border-secondary">
-        <a class="navbar-brand fw-bold gold-text" href="index.html">ABHISHRE ADMIN</a>
-        <div>
-            <a href="index.html" class="btn btn-outline-light btn-sm"><i class="fas fa-globe me-1"></i> View Website</a>
+<body>
+
+    <!-- Admin Navigation -->
+    <nav class="navbar admin-nav px-4 py-3 sticky-top">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="logo-box me-3">A</div>
+                <div>
+                    <span class="logo-text fw-bold fs-5">ABHISHRE</span>
+                    <span class="logo-subtext">ADMIN PORTAL</span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <a href="index.html" class="btn btn-outline-gold btn-sm"><i class="fas fa-globe me-1"></i> View Website</a>
+                <button id="logoutBtn" class="btn btn-danger btn-sm d-none"><i class="fas fa-sign-out-alt me-1"></i> Logout</button>
+            </div>
         </div>
     </nav>
 
-    <div class="container-fluid py-4">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="list-group luxury-card">
-                    <a href="#enquiries" class="list-group-item list-group-item-action active bg-black text-gold border-secondary"><i class="fas fa-envelope me-2"></i> Student Enquiries</a>
-                    <a href="#courses" class="list-group-item list-group-item-action bg-black text-white border-secondary"><i class="fas fa-graduation-cap me-2"></i> Manage Courses</a>
+    <div class="container py-5">
+        <!-- LOGIN SECTION (Shown when not authenticated) -->
+        <div id="loginSection" class="row justify-content-center py-5">
+            <div class="col-md-5">
+                <div class="card login-card p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div class="gold-border-circle mx-auto mb-3" style="width:60px; height:60px; font-size:1.5rem;">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h3 class="fw-bold gold-text">Admin Login</h3>
+                        <p class="small text-muted">Enter restricted admin credentials to view student applications</p>
+                    </div>
+
+                    <div id="loginAlert" class="alert alert-danger d-none py-2 small"></div>
+
+                    <form id="adminLoginForm">
+                        <div class="mb-3">
+                            <label class="form-label small gold-text">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-gold"><i class="fas fa-user"></i></span>
+                                <input type="text" id="adminUser" class="form-control bg-dark text-white border-secondary" placeholder="Enter username" required>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small gold-text">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-gold"><i class="fas fa-key"></i></span>
+                                <input type="password" id="adminPass" class="form-control bg-dark text-white border-secondary" placeholder="Enter password" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-gold w-100 py-2 fw-bold">Login to Admin Portal</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD SECTION (Shown after successful login) -->
+        <div id="dashboardSection" class="d-none">
+            <!-- Header Stats -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card p-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small d-block">TOTAL APPLICATIONS</span>
+                            <h2 class="gold-text fw-bold mb-0" id="totalSubmissions">0</h2>
+                        </div>
+                        <div class="gold-border-circle fs-4"><i class="fas fa-file-signature"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card p-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small d-block">RECENT ENQUIRY</span>
+                            <h6 class="text-white fw-bold mb-0 text-truncate" id="latestApplicant" style="max-width: 180px;">-</h6>
+                        </div>
+                        <div class="gold-border-circle fs-4"><i class="fas fa-clock"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card p-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small d-block">ADMIN STATUS</span>
+                            <span class="badge bg-success px-3 py-2">Authenticated</span>
+                        </div>
+                        <div class="gold-border-circle fs-4"><i class="fas fa-check-circle"></i></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-9">
-                <div class="card bg-black border-secondary p-4">
-                    <h3 class="gold-text mb-4">Student Enquiries</h3>
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Course</th>
-                                    <th>Message</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="enquiriesTable">
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted">Connect your MySQL database to view real-time student enquiries.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+            <!-- Main Applications Table Card -->
+            <div class="card dashboard-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                    <div>
+                        <h4 class="gold-text fw-bold mb-1"><i class="fas fa-users me-2"></i> Student Applications & Demo Class Requests</h4>
+                        <p class="small text-muted mb-0">Live list of students who filled the admission form</p>
                     </div>
+                    <div class="d-flex gap-2">
+                        <input type="text" id="searchFilter" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Search by name or phone..." style="width: 220px;">
+                        <button id="refreshBtn" class="btn btn-outline-gold btn-sm"><i class="fas fa-sync-alt me-1"></i> Refresh</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-dark-custom align-middle table-hover">
+                        <thead>
+                            <tr class="text-gold border-bottom border-secondary">
+                                <th>#</th>
+                                <th>Student Name</th>
+                                <th>Contact Info</th>
+                                <th>City</th>
+                                <th>Course Interested</th>
+                                <th>Message / Query</th>
+                                <th>Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="enquiriesTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <div class="spinner-border text-warning spinner-border-sm me-2" role="status"></div> Loading applications...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- jQuery & Bootstrap Bundle -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            let allEnquiries = [];
+
+            // Check if already authenticated
+            if (sessionStorage.getItem('adminAuth') === 'true') {
+                showDashboard();
+            }
+
+            // Handle Login Form Submit
+            $('#adminLoginForm').on('submit', function(e) {
+                e.preventDefault();
+                const username = $('#adminUser').val().trim();
+                const password = $('#adminPass').val().trim();
+
+                $.ajax({
+                    url: '/api/admin/login',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ username, password }),
+                    success: function(res) {
+                        if (res.success) {
+                            sessionStorage.setItem('adminAuth', 'true');
+                            showDashboard();
+                        }
+                    },
+                    error: function(err) {
+                        $('#loginAlert').removeClass('d-none').text('❌ Invalid Username or Password. Access Denied.');
+                    }
+                });
+            });
+
+            // Logout Functionality
+            $('#logoutBtn').on('click', function() {
+                sessionStorage.removeItem('adminAuth');
+                $('#dashboardSection').addClass('d-none');
+                $('#logoutBtn').addClass('d-none');
+                $('#loginSection').removeClass('d-none');
+                $('#adminLoginForm')[0].reset();
+                $('#loginAlert').addClass('d-none');
+            });
+
+            // Show Dashboard & Fetch Data
+            function showDashboard() {
+                $('#loginSection').addClass('d-none');
+                $('#dashboardSection').removeClass('d-none');
+                $('#logoutBtn').removeClass('d-none');
+                fetchEnquiries();
+            }
+
+            // Fetch Enquiries from Server
+            function fetchEnquiries() {
+                $.ajax({
+                    url: '/api/admin/enquiries',
+                    method: 'GET',
+                    success: function(data) {
+                        allEnquiries = data;
+                        renderEnquiries(allEnquiries);
+                    },
+                    error: function(err) {
+                        $('#enquiriesTableBody').html(`
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-danger">
+                                    ⚠️ Error fetching enquiries. Please try again.
+                                </td>
+                            </tr>
+                        `);
+                    }
+                });
+            }
+
+            // Render Table Data
+            function renderEnquiries(items) {
+                $('#totalSubmissions').text(items.length);
+                if (items.length > 0) {
+                    $('#latestApplicant').text(items[0].name || 'N/A');
+                }
+
+                if (items.length === 0) {
+                    $('#enquiriesTableBody').html(`
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="fas fa-inbox fa-2x mb-3 d-block gold-text"></i>
+                                No student applications received yet.
+                            </td>
+                        </tr>
+                    `);
+                    return;
+                }
+
+                let html = '';
+                items.forEach((item, idx) => {
+                    const dateStr = item.created_at ? new Date(item.created_at).toLocaleString() : 'Just Now';
+                    html += `
+                        <tr>
+                            <td class="fw-bold text-muted">${idx + 1}</td>
+                            <td class="fw-bold text-white">
+                                ${escapeHtml(item.name || '')}
+                            </td>
+                            <td>
+                                <div><i class="fas fa-envelope text-gold me-1 small"></i> <a href="mailto:${escapeHtml(item.email || '')}" class="text-white-50 text-decoration-none">${escapeHtml(item.email || '')}</a></div>
+                                <div><i class="fas fa-phone text-gold me-1 small"></i> <a href="tel:${escapeHtml(item.phone || '')}" class="text-white-50 text-decoration-none">${escapeHtml(item.phone || '')}</a></div>
+                            </td>
+                            <td><span class="badge bg-dark border border-secondary text-light">${escapeHtml(item.city || 'N/A')}</span></td>
+                            <td><span class="badge badge-course px-2 py-1">${escapeHtml(item.course_interested || 'General')}</span></td>
+                            <td class="small text-muted" style="max-width:220px;">${escapeHtml(item.message || 'No message provided')}</td>
+                            <td class="small text-muted">${dateStr}</td>
+                        </tr>
+                    `;
+                });
+                $('#enquiriesTableBody').html(html);
+            }
+
+            // Search filter
+            $('#searchFilter').on('keyup', function() {
+                const query = $(this).val().toLowerCase();
+                const filtered = allEnquiries.filter(item => 
+                    (item.name && item.name.toLowerCase().includes(query)) ||
+                    (item.phone && item.phone.toLowerCase().includes(query)) ||
+                    (item.email && item.email.toLowerCase().includes(query)) ||
+                    (item.city && item.city.toLowerCase().includes(query)) ||
+                    (item.course_interested && item.course_interested.toLowerCase().includes(query))
+                );
+                renderEnquiries(filtered);
+            });
+
+            // Manual Refresh Button
+            $('#refreshBtn').on('click', function() {
+                const $btn = $(this);
+                $btn.prop('disabled', true).html('<i class="fas fa-spin fa-spinner me-1"></i> Refreshing...');
+                fetchEnquiries();
+                setTimeout(() => {
+                    $btn.prop('disabled', false).html('<i class="fas fa-sync-alt me-1"></i> Refresh');
+                }, 800);
+            });
+
+            function escapeHtml(text) {
+                return $('<div>').text(text).html();
+            }
+        });
+    </script>
 </body>
 </html>

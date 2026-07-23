@@ -90,6 +90,34 @@ app.post('/api/enquiries', (req, res) => {
     });
 });
 
+// Admin Authentication Route
+app.post('/api/admin/login', (req, res) => {
+    const { username, password } = req.body;
+    if (username === 'aekanth' && password === 'aekanth190406') {
+        res.json({ success: true, token: 'admin-auth-token-aekanth' });
+    } else {
+        res.status(401).json({ success: false, message: 'Invalid Admin Credentials' });
+    }
+});
+
+// Admin Enquiries Fetch Route
+app.get('/api/admin/enquiries', (req, res) => {
+    db.query('SELECT * FROM enquiries ORDER BY created_at DESC', (err, results) => {
+        if (err) {
+            console.log('Fetching enquiries from fallback store...');
+            return res.json(fallbackEnquiries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+        }
+        // Merge with fallback in-memory submissions if any
+        const allEnquiries = [...results, ...fallbackEnquiries].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        res.json(allEnquiries);
+    });
+});
+
+// Explicit route for admin portal
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/admin.html'));
+});
+
 // Catch-all route to serve the frontend
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
