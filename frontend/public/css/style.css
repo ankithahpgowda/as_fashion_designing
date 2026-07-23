@@ -1,0 +1,318 @@
+/* Root Variables */
+:root {
+    --primary-color: #111111;
+    --secondary-color: #FFFFFF;
+    --accent-gold: #D4AF37;
+    --accent-gold-hover: #AA820A;
+    --bg-light: #F8F8F8;
+    --text-color: #333333;
+    --card-bg: #FFFFFF;
+    --nav-bg: rgba(17, 17, 17, 0.95);
+    --border-color: rgba(212, 175, 55, 0.25);
+}
+
+/* Dark Mode Variables */
+body.dark-mode {
+    --primary-color: #F8F8F8;
+    --secondary-color: #111111;
+    --bg-light: #121212;
+    --text-color: #E0E0E0;
+    --card-bg: #1e1e1e;
+    --nav-bg: rgba(0, 0, 0, 0.96);
+    --border-color: rgba(212, 175, 55, 0.35);
+}
+
+/* Global Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    transition: background-color 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, .logo-text, .luxury-badge {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Custom Helpers */
+.max-w-600 { max-width: 600px; }
+.max-w-700 { max-width: 700px; }
+.max-w-800 { max-width: 800px; }
+.tracking-wider { letter-spacing: 2px; }
+
+.gold-text { color: var(--accent-gold) !important; }
+.border-gold { border-color: var(--accent-gold) !important; }
+
+/* Buttons */
+.btn-gold {
+    background-color: var(--accent-gold);
+    color: #111;
+    border: none;
+    font-weight: 600;
+    padding: 12px 28px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+    background-color: var(--accent-gold-hover);
+    color: #FFF;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35);
+}
+
+.btn-outline-gold {
+    border: 2px solid var(--accent-gold);
+    color: var(--accent-gold);
+    background: transparent;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-gold:hover {
+    background-color: var(--accent-gold);
+    color: #111;
+}
+
+.btn-glass {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #FFF;
+    font-weight: 500;
+}
+
+.btn-glass:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #FFF;
+}
+
+/* Logo */
+.logo-box {
+    width: 38px;
+    height: 38px;
+    border: 2px solid var(--accent-gold);
+    color: var(--accent-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+.logo-text {
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: #FFF;
+}
+
+.logo-subtext {
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: var(--accent-gold);
+    display: block;
+    margin-top: -4px;
+}
+
+/* Navbar */
+.luxury-nav {
+    background: var(--nav-bg);
+    backdrop-filter: blur(12px);
+    padding: 12px 0;
+    transition: all 0.3s ease;
+}
+
+/* Hero Section */
+.hero-section {
+    min-height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.75)), url('https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+    position: relative;
+    padding-top: 100px;
+}
+
+.luxury-badge {
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+    padding: 6px 18px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+}
+
+/* Section Padding */
+.section-padding {
+    padding: 90px 0;
+}
+
+.bg-light-alt {
+    background-color: var(--card-bg);
+}
+
+/* About floating badge */
+.about-image-wrapper {
+    position: relative;
+}
+
+.main-about-img {
+    border: 2px solid var(--border-color);
+}
+
+.floating-experience-badge {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    min-width: 140px;
+}
+
+/* Course Cards */
+.luxury-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.luxury-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.18);
+    border-color: var(--accent-gold);
+}
+
+.course-img {
+    height: 220px;
+    object-fit: cover;
+}
+
+/* Glassmorphism */
+.glassmorphism-card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 16px;
+}
+
+.luxury-input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFF;
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
+.luxury-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-gold);
+    color: #FFF;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+}
+
+.luxury-dark-bg {
+    background-color: #0c0c0c;
+}
+
+/* Portfolio Overlay */
+.portfolio-item {
+    cursor: pointer;
+}
+
+.portfolio-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.portfolio-item:hover .portfolio-overlay {
+    opacity: 1;
+}
+
+/* Testimonials */
+.gold-border-circle {
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--accent-gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: bold;
+    color: var(--accent-gold);
+}
+
+/* Floating WhatsApp Button */
+.floating-whatsapp {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366;
+    color: #FFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+    z-index: 999;
+    transition: transform 0.3s ease;
+}
+
+.floating-whatsapp:hover {
+    transform: scale(1.1);
+    color: #FFF;
+}
+
+/* Accordion */
+.luxury-accordion .accordion-button {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    box-shadow: none;
+}
+
+.luxury-accordion .accordion-button:not(.collapsed) {
+    background-color: var(--card-bg);
+    color: var(--accent-gold);
+}
+
+/* Footer */
+.luxury-footer {
+    background-color: #050505;
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--accent-gold);
+}
+
+.social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+    margin-right: 10px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background-color: var(--accent-gold);
+    color: #111;
+}

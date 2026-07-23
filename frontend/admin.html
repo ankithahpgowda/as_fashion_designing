@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Abhishre Fashion Academy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="public/css/style.css">
+</head>
+<body class="bg-dark text-white">
+    
+    <nav class="navbar navbar-dark bg-black px-4 border-bottom border-secondary">
+        <a class="navbar-brand fw-bold gold-text" href="index.html">ABHISHRE ADMIN</a>
+        <div>
+            <a href="index.html" class="btn btn-outline-light btn-sm"><i class="fas fa-globe me-1"></i> View Website</a>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group luxury-card">
+                    <a href="#enquiries" class="list-group-item list-group-item-action active bg-black text-gold border-secondary"><i class="fas fa-envelope me-2"></i> Student Enquiries</a>
+                    <a href="#courses" class="list-group-item list-group-item-action bg-black text-white border-secondary"><i class="fas fa-graduation-cap me-2"></i> Manage Courses</a>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="card bg-black border-secondary p-4">
+                    <h3 class="gold-text mb-4">Student Enquiries</h3>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Course</th>
+                                    <th>Message</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="enquiriesTable">
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">Connect your MySQL database to view real-time student enquiries.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
