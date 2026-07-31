@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const mysql = require('mysql2');
 const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 
@@ -14,83 +14,78 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Database Connection
-const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASS || '',
-  database: process.env.DB_NAME || 'fashion_academy'
-});
+// ─────────────────────────────────────────────
+//  JSON File-Based Persistent Database
+//  All data is saved to backend/data/enquiries.json
+//  Survives server restarts, refreshes, logouts
+// ─────────────────────────────────────────────
+const DB_FILE = path.join(__dirname, 'data', 'enquiries.json');
 
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err.message);
-    console.log('Ensure MySQL is running and database "fashion_academy" exists.');
-  } else {
-    console.log('Connected to MySQL database.');
-    
-    // Create tables if they don't exist
-    const createCoursesTable = `
-      CREATE TABLE IF NOT EXISTS courses (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        description TEXT NOT NULL,
-        duration VARCHAR(100),
-        fees VARCHAR(100),
-        image_url VARCHAR(255),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-    db.query(createCoursesTable, (err) => {
-        if(err) console.error("Error creating courses table:", err);
-    });
+// Ensure the data directory exists
+if (!fs.existsSync(path.join(__dirname, 'data'))) {
+    fs.mkdirSync(path.join(__dirname, 'data'), { recursive: true });
+}
 
-    const createEnquiriesTable = `
-      CREATE TABLE IF NOT EXISTS enquiries (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        phone VARCHAR(50),
-        city VARCHAR(255),
-        course_interested VARCHAR(255),
-        message TEXT,
-        status VARCHAR(50) DEFAULT 'Pending',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-    db.query(createEnquiriesTable, (err) => {
-        if(err) console.error("Error creating enquiries table:", err);
-    });
-  }
-});
+// Ensure the JSON file exists and is valid
+if (!fs.existsSync(DB_FILE)) {
+    fs.writeFileSync(DB_FILE, '[]', 'utf8');
+}
 
-// In-memory fallback storage if DB fails/is disconnected
-const fallbackEnquiries = [];
+// Load all enquiries from the JSON file
+function loadEnquiries() {
+    try {
+        const raw = fs.readFileSync(DB_FILE, 'utf8');
+        const parsed = JSON.parse(raw.trim() || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+        console.error('Error reading enquiries.json, resetting:', e.message);
+        fs.writeFileSync(DB_FILE, '[]', 'utf8');
+        return [];
+    }
+}
 
-// API Routes
-app.get('/api/courses', (req, res) => {
-    db.query('SELECT * FROM courses', (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(results);
-    });
-});
+// Save all enquiries to the JSON file
+function saveEnquiries(enquiries) {
+    fs.writeFileSync(DB_FILE, JSON.stringify(enquiries, null, 2), 'utf8');
+}
 
+console.log('✅ Persistent JSON database ready at:', DB_FILE);
+console.log('✅ Total enquiries stored:', loadEnquiries().length);
+
+// ─────────────────────────────────────────────
+//  API Routes
+// ─────────────────────────────────────────────
+
+// Submit a new enquiry (from admission form)
 app.post('/api/enquiries', (req, res) => {
     const { name, email, phone, course_interested, city, message } = req.body;
-    const query = 'INSERT INTO enquiries (name, email, phone, city, course_interested, message) VALUES (?, ?, ?, ?, ?, ?)';
-    
-    db.query(query, [name, email, phone, city, course_interested, message], (err, result) => {
-        if (err) {
-            console.error('MySQL insert error, using in-memory store:', err.message);
-            const newEnquiry = { id: Date.now(), name, email, phone, city, course_interested, message, created_at: new Date() };
-            fallbackEnquiries.push(newEnquiry);
-            return res.json({ message: 'Enquiry submitted successfully!', id: newEnquiry.id });
-        }
-        res.json({ message: 'Enquiry submitted successfully!', id: result.insertId });
-    });
+
+    if (!name || !email) {
+        return res.status(400).json({ error: 'Name and email are required.' });
+    }
+
+    const enquiries = loadEnquiries();
+
+    const newEnquiry = {
+        id: Date.now(),
+        name: name || '',
+        email: email || '',
+        phone: phone || '',
+        city: city || '',
+        course_interested: course_interested || '',
+        message: message || '',
+        status: 'Pending',
+        created_at: new Date().toISOString()
+    };
+
+    enquiries.push(newEnquiry);
+    saveEnquiries(enquiries);
+
+    console.log(`✅ New enquiry saved: ${name} (${email}) - Total: ${enquiries.length}`);
+    res.json({ message: 'Enquiry submitted successfully!', id: newEnquiry.id });
 });
 
-// Admin Authentication Route
+// Admin Login
 app.post('/api/admin/login', (req, res) => {
     const { username, password } = req.body;
     if (username === 'aekanth' && password === 'aekanth190406') {
@@ -100,61 +95,65 @@ app.post('/api/admin/login', (req, res) => {
     }
 });
 
-// Admin Enquiries Fetch Route
+// Get all enquiries for admin dashboard
 app.get('/api/admin/enquiries', (req, res) => {
-    db.query('SELECT * FROM enquiries ORDER BY created_at DESC', (err, results) => {
-        if (err) {
-            console.log('Fetching enquiries from fallback store...');
-            return res.json(fallbackEnquiries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
-        }
-        // Merge with fallback in-memory submissions if any
-        const allEnquiries = [...results, ...fallbackEnquiries].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        res.json(allEnquiries);
-    });
+    const enquiries = loadEnquiries();
+    // Return sorted newest first
+    const sorted = [...enquiries].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    res.json(sorted);
 });
 
-// Update Enquiry Status (Accept / Reject)
+// Update enquiry status (Accept / Reject)
 app.put('/api/admin/enquiries/:id/status', (req, res) => {
-    const id = req.params.id;
+    const id = String(req.params.id);
     const { status } = req.body;
 
-    // Update in fallback array if exists
-    const fallbackItem = fallbackEnquiries.find(item => String(item.id) === String(id));
-    if (fallbackItem) {
-        fallbackItem.status = status;
+    const enquiries = loadEnquiries();
+    const idx = enquiries.findIndex(e => String(e.id) === id);
+
+    if (idx === -1) {
+        return res.status(404).json({ success: false, message: 'Enquiry not found.' });
     }
 
-    db.query('UPDATE enquiries SET status = ? WHERE id = ?', [status, id], (err, result) => {
-        res.json({ success: true, message: `Status updated to ${status}` });
-    });
+    enquiries[idx].status = status;
+    saveEnquiries(enquiries);
+
+    console.log(`✅ Enquiry ${id} status updated to: ${status}`);
+    res.json({ success: true, message: `Status updated to ${status}` });
 });
 
-// Delete Enquiry
+// Delete enquiry
 app.delete('/api/admin/enquiries/:id', (req, res) => {
-    const id = req.params.id;
+    const id = String(req.params.id);
+    const enquiries = loadEnquiries();
+    const filtered = enquiries.filter(e => String(e.id) !== id);
 
-    // Remove from fallback array if exists
-    const fallbackIndex = fallbackEnquiries.findIndex(item => String(item.id) === String(id));
-    if (fallbackIndex !== -1) {
-        fallbackEnquiries.splice(fallbackIndex, 1);
+    if (filtered.length === enquiries.length) {
+        return res.status(404).json({ success: false, message: 'Enquiry not found.' });
     }
 
-    db.query('DELETE FROM enquiries WHERE id = ?', [id], (err, result) => {
-        res.json({ success: true, message: 'Enquiry deleted successfully' });
-    });
+    saveEnquiries(filtered);
+    console.log(`🗑️ Enquiry ${id} deleted. Remaining: ${filtered.length}`);
+    res.json({ success: true, message: 'Enquiry deleted successfully.' });
 });
 
-// Explicit route for admin portal
+// Get courses (static for now, can be extended)
+app.get('/api/courses', (req, res) => {
+    res.json([]);
+});
+
+// Admin portal route
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/admin.html'));
+    res.sendFile(path.join(__dirname, '../frontend/admin.html'));
 });
 
-// Catch-all route to serve the frontend
+// Catch-all: serve frontend
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📁 Data stored permanently in: ${DB_FILE}`);
 });

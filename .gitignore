@@ -1,3 +1,6 @@
 node_modules/
 .env
 .DS_Store
+# Keep backend/data (persistent JSON database) tracked
+!backend/data/
+!backend/data/enquiries.json
