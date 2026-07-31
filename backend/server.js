@@ -122,6 +122,26 @@ app.put('/api/admin/enquiries/:id/status', (req, res) => {
     res.json({ success: true, message: `Status updated to ${status}` });
 });
 
+// Update fee information
+app.put('/api/admin/enquiries/:id/fee', (req, res) => {
+    const id = String(req.params.id);
+    const { fee_paid, fee_pending } = req.body;
+
+    const enquiries = loadEnquiries();
+    const idx = enquiries.findIndex(e => String(e.id) === id);
+
+    if (idx === -1) {
+        return res.status(404).json({ success: false, message: 'Enquiry not found.' });
+    }
+
+    enquiries[idx].fee_paid = fee_paid;
+    enquiries[idx].fee_pending = fee_pending;
+    saveEnquiries(enquiries);
+
+    console.log(`✅ Enquiry ${id} fee updated. Paid: ${fee_paid}, Pending: ${fee_pending}`);
+    res.json({ success: true, message: `Fee information updated successfully.` });
+});
+
 // Delete enquiry
 app.delete('/api/admin/enquiries/:id', (req, res) => {
     const id = String(req.params.id);

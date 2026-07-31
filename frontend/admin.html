@@ -185,6 +185,7 @@
                                 <th>Course Interested</th>
                                 <th>Message</th>
                                 <th>Status</th>
+                                <th style="min-width: 150px;">Fee Details</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                         </thead>
@@ -318,6 +319,17 @@
                             <td><span class="badge badge-course px-2 py-1">${escapeHtml(item.course_interested || 'General')}</span></td>
                             <td class="small text-muted" style="max-width:180px;">${escapeHtml(item.message || 'No message')}</td>
                             <td>${statusBadge}</td>
+                            <td>
+                                <div class="input-group input-group-sm mb-1">
+                                    <span class="input-group-text" style="width: 45px;">Paid</span>
+                                    <input type="number" class="form-control fee-paid-input" data-id="${item.id}" value="${item.fee_paid || ''}" placeholder="0">
+                                </div>
+                                <div class="input-group input-group-sm mb-1">
+                                    <span class="input-group-text" style="width: 45px;">Pend</span>
+                                    <input type="number" class="form-control fee-pending-input" data-id="${item.id}" value="${item.fee_pending || ''}" placeholder="0">
+                                </div>
+                                <button class="btn btn-outline-success btn-sm w-100 btn-update-fee" data-id="${item.id}"><i class="fas fa-save"></i> Save</button>
+                            </td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-sm">
                                     <button class="btn btn-success btn-sm btn-accept" data-id="${item.id}" title="Accept Application"><i class="fas fa-check"></i> Accept</button>
@@ -341,6 +353,40 @@
                     success: function(res) {
                         showActionAlert('✅ Application status updated to ACCEPTED.');
                         fetchEnquiries();
+                    }
+                });
+            });
+
+            // Handle Update Fee Action
+            $(document).on('click', '.btn-update-fee', function() {
+                const id = $(this).data('id');
+                const row = $(this).closest('tr');
+                const feePaid = row.find('.fee-paid-input').val();
+                const feePending = row.find('.fee-pending-input').val();
+                
+                const $btn = $(this);
+                const originalText = $btn.html();
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+
+                $.ajax({
+                    url: `/api/admin/enquiries/${id}/fee`,
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ fee_paid: feePaid, fee_pending: feePending }),
+                    success: function(res) {
+                        showActionAlert('💰 Fee details saved successfully.');
+                        $btn.prop('disabled', false).html('<i class="fas fa-check"></i> Saved');
+                        setTimeout(() => $btn.html(originalText), 2000);
+                        // Update local array so search doesn't wipe changes before refresh
+                        const idx = allEnquiries.findIndex(e => String(e.id) === String(id));
+                        if (idx > -1) {
+                            allEnquiries[idx].fee_paid = feePaid;
+                            allEnquiries[idx].fee_pending = feePending;
+                        }
+                    },
+                    error: function() {
+                        showActionAlert('❌ Error saving fee details.');
+                        $btn.prop('disabled', false).html(originalText);
                     }
                 });
             });
